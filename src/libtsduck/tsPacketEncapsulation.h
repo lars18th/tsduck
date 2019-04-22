@@ -321,6 +321,7 @@ namespace ts {
         BitRate          _bitrate;         // Bitrate computed from last PCR.
         bool             _insertPCR;       // Insert a PCR in next output packet.
         uint8_t          _ccOutput;        // Continuity counter in output PID.
+        uint8_t          _ccPES;           // Continuity counter in PES ASYNC mode.
         PIDCCMap         _lastCC;          // Continuity counter by PID.
         size_t           _lateDistance;    // Distance from the last packet.
         size_t           _lateMaxPackets;  // Maximum number of packets in _latePackets.
@@ -332,6 +333,9 @@ namespace ts {
 
         // Fill packet payload with data from the first queued packet.
         void fillPacket(TSPacket& pkt, size_t& pktIndex);
+
+        // Compute the PCR distance from this packe to last PCR.
+        uint64_t getPCRDistance() { return (PacketInterval(_bitrate, _currentPacket - _pcrLastPacket) * SYSTEM_CLOCK_FREQ) / MilliSecPerSec; }
 
         // Inaccessible operations.
         PacketEncapsulation(const PacketEncapsulation&) = delete;
